@@ -1,0 +1,23 @@
+{
+  "name": "node-red-contrib-acepro",
+  "version": "1.0.0",
+  "description": "Provides control and feedback of the aceBUS connected devices (proprietary of company ACEPRO)",
+  "main": "",
+  "node-red" : {
+        "nodes": {
+            "aceproNet": "acepro-net.js",
+            "aceproIOID": "acepro-ioid.js"
+        }
+    },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Darius Aleškaitis @ ALDARNA",
+  "license": "Apache-2.0",
+  "keywords": [
+    "node-red",
+    "acepro",
+    "aldarna",
+    "acebus"
+  ]
+}

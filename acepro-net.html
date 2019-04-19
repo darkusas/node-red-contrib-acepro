@@ -1,0 +1,154 @@
+<!--
+  Copyright MB Aldarna @ 20190401
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  http://www.apache.org/licenses/LICENSE-2.0
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<script type="text/x-red" data-help-name="aceproNet">
+    <h2><b>Pasijungimo prie acePRO įrangos konfigūravimas.</b></h2>
+    </br>
+
+</script>
+
+<script type="text/x-red" data-template-name="aceproNet">
+    <div class="form-row">
+        <label for="node-config-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-config-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-BrAddress"><i class="icon-bookmark"></i> Broadcast to</label>
+        <input type="text" id="node-config-input-BrAddress">
+    </div>    
+    <div class="form-row">
+        <label for="node-config-input-port"><i class="icon-bookmark"></i> Port</label>
+        <input type="text" id="node-config-input-port">
+    </div>
+    
+    
+    
+     <div class="form-row">
+        <label for="node-config-input-port"><i class="icon-bookmark"></i> Select file</label>
+        <input  type='file' style="display:none;"  id="ImportSett" />
+        <button onclick="javascript:ImportSettClick()">Import IOID list</button>
+    </div>
+       
+      <div class="form-row">
+        <label for="node-config-input-FileName"><i class="icon-bookmark"></i> File selected:</label>
+        <input type="text" id="node-config-input-FileName" readonly>
+    </div>   
+    
+       <div class="form-row">
+        <input type="text" style="display:none;" id="node-config-input-IOlist" readonly>
+    </div>    
+    
+    
+    <script>
+    
+    
+
+      var impSet = [];
+       var fileInput = $('#ImportSett');
+	   fileInput.change(function(e) {
+	   
+            String.prototype.replaceAll = function(search, replacement) {
+                var target = this;
+                return target.replace(new RegExp(search, 'g'), replacement);
+            };
+    	   
+	   
+	   
+	   
+	   
+	   
+        	var	b = location.pathname.split("/");
+        	b =  b[b.length-3]; 
+            var FName=e.target.files[0].name;
+        		
+ 
+        	$("#node-config-input-FileName").val(FName);	
+        	   
+    		var reader = new FileReader();
+    		reader.onload = function(e) {
+    		    
+    			   var Txt = reader.result;
+    			   impSet = [];
+    			   let eilutes = Txt.split('\n');
+    			   for(let ei1 in eilutes) {
+    			       let elm = [];
+    			       let eileMas = eilutes[ei1].split(',');
+    			        for(let ei2 in eileMas) {
+    			            let x = eileMas[ei2];
+    			            if(x.length === 0){
+    			                elm.push(null);
+    			            }else if(isNaN(x)){
+    			                elm.push(x.split('|k|').join(','));
+    			            }else{
+    			                elm.push(parseFloat(x));
+    			            }
+    			        }
+    			       impSet.push(elm);
+    			   }
+    			   
+    			   //console.log(impSet);
+    			   $("#node-config-input-IOlist").val(JSON.stringify(impSet));
+    			   
+    			   
+    			   /*
+    			   var Jsonas ={};
+    			   try {
+    					Jsonas = JSON.parse(Txt, ""); 
+    				 }
+    				catch(err) {
+    					txt="ERROR: Jsonas = JSON.parse\n\n Error description: " + err.message + "\n\n";
+    					console.log(txt);
+    					alert(txt);
+    					return;
+    				 }
+    			    */
+    		 }
+    		   
+		   reader.readAsText(fileInput[0].files[0]);  
+	   });
+    
+        var ImportSettClick = function() 
+        {
+        	$('#ImportSett').click();
+        }
+
+        
+     //   $("#node-config-showVal").change(function(x, y) {
+          // console.log("showVal: x="+ JSON.stringify(x) + ", y=" + y);
+     //     console.log("Value: " + $("#node-config-showVal").prop("checked"));
+  
+          
+         // $("#node-config-useSSL").prop("checked") === true) 
+          
+     //   });
+    
+    
+    </script>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('aceproNet', {
+        category: 'config',
+        defaults: {
+            name: {value: "aceNodeRED"},
+            BrAddress: {value: "0.0.0.0", required: true, validate: RED.validators.regex(/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/)},
+            port: {value: 31456, required: true, validate: RED.validators.number()},
+            FileName: {value: " - - - "},
+            IOlist: {value:""}
+        },
+        
+        label: function() {
+            return (this.name || 'aceproNet');
+        }
+    });
+</script>

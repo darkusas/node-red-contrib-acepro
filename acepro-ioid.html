@@ -1,0 +1,1007 @@
+<!--
+  Copyright Darius Aleškaitis @ MB ALDARNA (2019 04 02)
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  http://www.apache.org/licenses/LICENSE-2.0
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+ <!--------------------------------------      G   E   T       -----------------------------------------------------------------> 
+ 
+<script type="text/x-red" data-help-name="aceproIOID out">
+    <p><b>Gaunami duomenys iš acePRO įrangos.</b></p>
+
+    <h3>Outputs</h3>
+        <ol class="node-ports">
+            <li>Out1(viršutinis): Duomenys
+                <dl class="message-properties"> <dt>payload     <span class="property-type">number</span></dt> <dd>gaunama kintamojo reikšmė.</dd>  </dl>
+                <dl class="message-properties"> <dt>topic       <span class="property-type">string</span></dt> <dd>nurodo adresą iš kur buvo gauta reikšmė.</dd>  </dl>                
+                <dl class="message-properties"> <dt>host        <span class="property-type">string</span></dt> <dd>nurodo iš kurio modulio gauti duomenys.</dd>  </dl>                
+                <dl class="message-properties"> <dt>IOID        <span class="property-type">number</span></dt> <dd>nurodo kuriam IOID priklauso gauta reikšmė.</dd>  </dl>
+                <dl class="message-properties"> <dt>IOIDstate   <span class="property-type">number</span></dt> <dd>nurodo klaidos kodą: 0 = nėra klaidų.</dd>  </dl>                
+            </li>
+            <li>Out2(apatinis): Statusas
+                <dl class="message-properties"> <dt>payload     <span class="property-type">string</span></dt> <dd>Statusas tekstine išraiška.</dd>  </dl>
+                <dl class="message-properties"> <dt>topic       <span class="property-type">string</span></dt> <dd>nurodo adresą iš kur buvo gauta reikšmė.</dd>  </dl>  
+                <dl class="message-properties"> <dt>Value       <span class="property-type">number</span></dt> <dd>gaunama kintamojo reikšmė.</dd>  </dl>  
+                <dl class="message-properties"> <dt>host        <span class="property-type">string</span></dt> <dd>nurodo iš kurio modulio gauti duomenys.</dd>  </dl>                
+                <dl class="message-properties"> <dt>IOID        <span class="property-type">number</span></dt> <dd>nurodo kuriam IOID priklauso gauta reikšmė.</dd>  </dl>
+                <dl class="message-properties"> <dt>IOIDstate   <span class="property-type">number</span></dt> <dd>nurodo klaidos kodą: 0 = nėra klaidų.</dd>  </dl> 
+            </li>
+        </ol>
+    
+    <h3>Details</h3>
+    <p><b>Out1(viršutinis): Duomenys</b></p>
+    <p><code>msg.payload</code>gaunama kintamojo reikšmė.</p>
+    <p><code>msg.topic</code> nurodo adresą iš kur buvo gauta reikšmė.</p>
+    <p><code>msg.host</code> nurodo iš kurio modulio gauti duomenys.</p>
+    <p><code>msg.IOID</code> nurodo kuriam IOID priklauso gauta reikšmė.</p>
+    <p><code>msg.IOIDstate</code> nurodo klaidos kodą: 0 = nėra klaidų.</p>
+    </br>
+    <p><b>Out2(apatinis): Statusas</b></p>
+    <p><code>msg.payload</code>Statusas tekstine išraiška.</p>
+    <p><code>msg.topic</code> nurodo adresą iš kur buvo gauta reikšmė.</p>
+    <p><code>msg.Value</code> gaunama kintamojo reikšmė.</p>
+    <p><code>msg.host</code> nurodo iš kurio modulio gauti duomenys.</p>
+    <p><code>msg.IOID</code> nurodo kuriam IOID priklauso gauta reikšmė.</p>
+    <p><code>msg.IOIDstate</code> nurodo klaidos kodą: 0 = nėra klaidų.</p>
+</script>
+
+<script type="text/x-red" data-template-name="aceproIOID out">
+
+    <style> 
+        .aceTblPop{
+            display: none;
+            width: 100%;
+            height: 100%;
+            z-index: 20;
+            position: fixed;
+            background: white;
+            left: 0px;
+            top: 0px;
+        }
+        .aceproSelectIOID {
+            background: #f5f5f5;
+            background-image: -webkit-linear-gradient(top, #f5f5f5, #e8e8e8);
+            background-image: -moz-linear-gradient(top, #f5f5f5, #e8e8e8);
+            background-image: -ms-linear-gradient(top, #f5f5f5, #e8e8e8);
+            background-image: -o-linear-gradient(top, #f5f5f5, #e8e8e8);
+            background-image: linear-gradient(to bottom, #f5f5f5, #e8e8e8);
+            -webkit-border-radius: 6;
+            -moz-border-radius: 6;
+            border-radius: 6px;
+            font-family: Arial;
+            color: #474747;
+            font-size: 20px;
+            padding: 20px 40px 20px 40px;
+            text-decoration: none;
+            text-align: center;
+        }
+        .aceproSelectIOID:hover {
+            background: #adadad;
+            background-image: -webkit-linear-gradient(top, #adadad, #b8b8b8);
+            background-image: -moz-linear-gradient(top, #adadad, #b8b8b8);
+            background-image: -ms-linear-gradient(top, #adadad, #b8b8b8);
+            background-image: -o-linear-gradient(top, #adadad, #b8b8b8);
+            background-image: linear-gradient(to bottom, #adadad, #b8b8b8);
+            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
+        }
+        
+        .TblFooteris{
+            width: 99%;
+            display: flow-root;
+        }       
+        .closeButtonas{
+            float: right;
+        }
+        .infoDivas{
+            float: left;
+        }
+        
+    </style>
+
+
+
+
+    <div class="form-row">
+        <label for="node-input-network"><i class="icon-bookmark"></i> Network</label>
+        <input type="text" id="node-input-network">
+    </div>
+
+    <div id="aceMainSel" style="display: none;">  
+    
+        <div class="form-row">
+            <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+            <input type="text" id="node-input-name" placeholder="Name">
+        </div>
+    
+        <div class="form-row">
+            <label for="node-input-host"><i class="icon-tag"></i> Host</label>
+            <input type="text" id="node-input-host" placeholder="host">
+        </div>    
+        <div class="form-row">
+            <label for="node-input-IOID"><i class="icon-bookmark"></i> IOID</label>
+            <input type="text" id="node-input-IOID">
+        </div>
+        <div class="form-row">
+            <label for="node-input-remark"><i class="icon-bookmark"></i> Remarks</label>
+            <input type="text" id="node-input-remark">
+        </div>  
+        <!--
+        <div class="form-row" style="display:none;">
+            <label for="node-input-ReadOnly"><i class="icon-bookmark"></i> ReadOnly</label>
+            <input type="text" id="node-input-ReadOnly">
+        </div>     
+        -->
+        <div class="form-row">
+            <label for="node-input-ShowSYS"><i class="icon-bookmark"></i> SYS data</label>
+            <select id="node-input-ShowSYS" style="width:75px !important">
+                <option value="false">Hide</option>
+                <option value="true">Show</option>
+            </select>
+        </div>    
+                
+   
+        <div id="aceSelBut" style="display: none;">
+            <div class="form-row">
+                <div id="aceproSelIOIDButt" class="aceproSelectIOID">Select from the list</div>
+            </div>
+        </div>
+
+    </div>
+ 
+
+<script>
+ 
+            var SelNetTable = [];
+            var curIOIDtable = {};
+            
+            var aceNameIndex  = -1;
+            var aceHostIndex = -1;
+            var aceIOIDIndex  = -1;
+            var aceRemarkIndex  = -1;
+            var aceReadOnlyIndex = -1;   
+            
+            var SysIOIDIndex = -1;            
+            
+             $('#node-input-ShowSYS').on('change', function (e) {
+                let optionSelected = $("option:selected", this);
+                let valueSelected = this.value;
+
+                if(valueSelected==="true"){
+                    
+                    $("#aceproSelIOIDButt").hide();
+                    
+                    setTimeout(function(){ 
+ 
+                        bootbox.confirm({
+                            title: "Warning: SYS data was set to be shown!",
+                            message: "Accessing these parameters could lead to unpredictable behavior.</br>Are You sure You know what You're doing?",
+                            buttons: {
+                                confirm: {
+                                    label: 'Yes',
+                                    className: 'btn-danger pull-left' 
+                                },
+                                cancel: {
+                                    label: 'No',
+                                    className: 'btn-success pull-right'
+                                }
+                            },
+                            callback: function (result) {
+                                if(result===false){
+                                    $("#node-input-ShowSYS").val("false");
+                                }
+                                $("#aceproSelIOIDButt").show();
+                            }
+                        });
+                                                
+                    }, 500);
+                    
+                    
+                }
+            });
+            
+            // buvo pasirinkta iš sąrašo
+            $("#aceproSelIOIDButt").on('click',function(a){ 
+            
+                var GridKompoenntas = null;
+                
+                let buttonas = $('<button/>').text("click here or hit ESC button to close");
+                buttonas.addClass('closeButtonas');
+                
+                let infodiv = $('<div/>');
+                infodiv.addClass('infoDivas');
+
+
+                let tblfooteris = $('<div/>');
+                tblfooteris.addClass('TblFooteris');
+                
+                tblfooteris.append(infodiv).append(buttonas);
+
+                let IOIDtbl = $('<div/>');
+
+                IOIDtbl.attr('id', 'aceBusIOIDtbl');
+                IOIDtbl.addClass('ag-theme-balham');
+                IOIDtbl.attr('style', 'height: calc(100vh - 40px);width:99%;');                
+
+                let acpoBodTab = $('<div/>').addClass('aceTblPop').append(tblfooteris).append(IOIDtbl);
+            
+                acpoBodTab.appendTo('body');  
+                 
+                // sunaikinam ir uždarom
+                function uzdarom(){
+ 
+                    // išmetam pranešimą kad reikės palaukti
+                    var WaitCleandialog = bootbox.dialog({
+                        message: '<p class="text-center mb-0"><i class="fa fa-spin fa-cog"></i> Please wait, cleaning memory!</p>',
+                        closeButton: false
+                    }); 
+                    
+                    setTimeout(function(){ 
+                             // unbindinam escape
+                            $(document).off("keydown");
+                            
+                             //Delete the datable object first
+                            GridKompoenntas = null;
+                            
+                            //Remove all the DOM elements
+                            $('#aceBusIOIDtbl').empty();    
+                            acpoBodTab.remove();  
+                            WaitCleandialog.modal('hide');    
+                            
+                        },300);
+                }      
+                      
+                // uždarymo buttonas          
+                buttonas.on('click', () => uzdarom() );                 
+                
+                // jeigu paspaudi 'escape'
+                $(document).on("keydown", (a) =>  {
+                    if(a.keyCode===27){  uzdarom(); }
+                });
+                                
+                // išmetam pranešimą kad reikės palaukti
+                var Waitdialog = bootbox.dialog({
+                                    message: '<p class="text-center mb-0"><i class="fa fa-spin fa-cog"></i> Please wait, preparing data!</p>',
+                                    closeButton: false
+                                 });
+                                 
+                // atrenkam lentelės duomenis
+                let selNetvID = $("#node-input-network").val();
+                let selNetNode = RED.nodes.node(selNetvID);
+                if(selNetNode===null){
+                     acpoBodTab.remove();
+                     uzdarom();
+                     console.error("ERROR: neteork not selected !!");
+                     return;  
+                }                    
+                 SelNetTable = JSON.parse(selNetNode.IOlist);
+            
+                // surankiojam vardus bei atrenkam indexus
+                let colVardai = [];
+                let columnDefs  = [];
+                let seltt = SelNetTable[0];
+                let ttt ="";
+                let tOpt = {};
+                  for(let i in SelNetTable[0]){
+                        ttt = SelNetTable[0][i];
+                        colVardai.push(ttt);
+          
+                        switch (ttt) {
+                            case 'Module':
+                                        aceHostIndex    = parseInt(i);
+                                        tOpt            = {width: 120, suppressSizeToFit: true};
+                                break;
+                            case 'IOID':
+                                        aceIOIDIndex    = parseInt(i);
+                                        tOpt            = {width: 90, filter:'agNumberColumnFilter', suppressSizeToFit: true};
+                                break;
+                            case 'Space':
+                                        tOpt            = {width: 114, suppressSizeToFit: true};
+                                break;                            
+                            case 'Area':
+                                        tOpt            = {width: 80, suppressSizeToFit: true};
+                                break;
+                            case 'Room':
+                                        tOpt            = {width: 90, suppressSizeToFit: true};
+                                break;
+                            case 'Name':
+                                        aceNameIndex    = parseInt(i);
+                                        tOpt            = {width: 200, minWidth: 100, maxWidth: 300};
+                                break;                             
+                            case 'IOType': 
+                                        tOpt            = {width: 110, suppressSizeToFit: true};
+                                break;
+                            case 'SrcType': 
+                                        tOpt            = {width: 90, suppressSizeToFit: true};
+                                break;
+                            case 'SubID':
+                                        tOpt            = {width: 80, suppressSizeToFit: true};
+                                break;                            
+                            case 'DevIDOrAddr':
+                                        tOpt            = {width: 100, suppressSizeToFit: true};
+                                break;
+                            case 'ChOrTarget':
+                                        tOpt            = {width: 100, suppressSizeToFit: true};
+                                break;
+                            case 'Rem':
+                                        aceRemarkIndex  = parseInt(i);
+                                        tOpt            = {resizable: true};
+                                break;    
+                            case 'ReadOnly':
+                                        aceReadOnlyIndex= parseInt(i);
+                                        tOpt            = {hide: true};
+                                break;
+                            case 'SysVal':
+                                        SysIOIDIndex    = parseInt(i);
+                                        tOpt            = {hide: true};
+                                break;  
+                            default:
+
+                        }
+                        let tset = {headerName: ttt, field: ttt};
+                        $.extend(tset,tOpt);
+                        columnDefs.push(tset);
+                }
+
+
+                // tikrinam ar visi svarbūs laukai yra rasti
+                if(aceNameIndex===-1){  console.error("key 'Name' not found !!!");  return; }
+                if(aceHostIndex===-1){  console.error("key 'Host' not found !!!"); return;  }    
+                if(aceIOIDIndex===-1){  console.error("key 'IOID' not found !!!");  return; }
+    
+                if(aceReadOnlyIndex===-1){  console.error("key 'ReadOnly' not found !!!");  return; }
+                if(SysIOIDIndex===-1){  console.error("key 'SysVal' not found !!!"); return;  }               
+
+                // ištrinam head'erį
+                SelNetTable.splice(0, 1);
+                
+                // jeigu uždėta varnelė nufiltruojam sisteminius IOID
+                if($("#node-input-ShowSYS").val()==="false"){
+                    SelNetTable= SelNetTable.filter(el => el[SysIOIDIndex] === null );                    
+                }
+                
+                // pašalinam nulinius įrašus
+                SelNetTable= SelNetTable.filter(el => el[0]!==null );  
+                
+                var rowData = [];
+                for(let i in SelNetTable){
+                    let tobj =  {};
+                    for(let ii in SelNetTable[i]){
+                            tobj[colVardai[ii]] = SelNetTable[i][ii];
+                    }
+                    rowData.push(tobj);
+                }
+                
+                var gridOptions = {
+                    defaultColDef: {
+                        resizable: true,
+                        sortable: true,
+                        filter: true
+                    },
+                    floatingFilter: true,
+                    multiSortKey: 'ctrl',
+                    columnDefs: columnDefs,
+                    rowData: rowData,
+                    onGridReady: function(params) {
+                        Waitdialog.modal('hide'); 
+                        $("#aceBusIOIDtbl").focus();
+                    },
+                    onFirstDataRendered: function(params) {
+                        params.api.sizeColumnsToFit();
+                    },
+                    onRowClicked: function(param){
+                        // užpildom duomenis
+                        $('#node-input-name').val(param.data.Name);                
+                        $('#node-input-host').val(param.data.Module);                
+                        $('#node-input-IOID').val(param.data.IOID);              
+                        $('#node-input-remark').val(param.data.Rem); 
+                        
+                       // $('#node-input-ReadOnly').val( (param.data.ReadOnly!==null)?true:false );
+            
+                        // Uždarom langą
+                        uzdarom();
+                    },
+                    onModelUpdated: function(param){
+                        let rowstodisp = param.api.getModel().rowsToDisplay.length;
+                        let rowsTotal = SelNetTable.length;
+                        if(rowstodisp===rowsTotal){
+                            infodiv.text("Total rows: " + rowsTotal);
+                        }else{
+                            infodiv.text("Rows shown: "+ rowstodisp + ", from: " + rowsTotal);
+                        }
+                    }
+                };
+            
+                
+                var eGridDiv = document.querySelector('#aceBusIOIDtbl');
+                
+                  // atvaizduojam lentelę
+                acpoBodTab.show( 100, () => {              
+                    GridKompoenntas = new agGrid.Grid(eGridDiv, gridOptions);
+                });
+  
+            });
+</script>
+
+
+</script>
+
+
+<!-- Register -->
+<script type="text/javascript">
+
+    RED.nodes.registerType('aceproIOID out', {
+        category: 'ACEPRO',
+        color: '#25A6FF',
+        defaults: {
+            name: {value: "",required: true},
+            host: {value: "",required: true},
+            IOID: {required: true, validate: RED.validators.number()},
+           // ReadOnly : {value: true },
+            network: {value: "",required: true, type: "aceproNet"},
+            remark: {value: ""},
+            ShowSYS : {value: false }
+        },
+        outputs:2,
+        align: "left",
+        icon: "acebus.png",
+        paletteLabel: "GET",
+        label: function() {
+            return (this.name||"GET");
+        },
+        oneditprepare: function () {
+
+            if(this.network!==""){
+                $("#aceMainSel").show();
+            }
+     
+            $('<link/>', {
+               rel: 'stylesheet',
+               type: 'text/css',
+               //href: '//cdnjs.cloudflare.com/ajax/libs/ag-grid/19.1.4/styles/ag-grid.css'
+               href: '//unpkg.com/ag-grid-community/dist/styles/ag-grid.css'
+            }).appendTo("head");                 
+            $('<link/>', {
+               rel: 'stylesheet',
+               type: 'text/css',
+              // href: '//cdnjs.cloudflare.com/ajax/libs/ag-grid/19.1.4/styles/ag-theme-balham.css'
+               href: '//unpkg.com/ag-grid-community/dist/styles/ag-theme-balham.css'
+            }).appendTo("head");                   
+             
+     
+            // confirm langas generujamas bootbox
+            $.getScript( "//cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js" );
+            
+            
+             //$.getScript( "//cdnjs.cloudflare.com/ajax/libs/ag-grid/19.1.4/ag-grid-community.min.noStyle.js" ) 
+             $.getScript( "//unpkg.com/ag-grid-community/dist/ag-grid-community.min.noStyle.js") 
+              .done(function( script, textStatus ) {
+                
+                $("#node-input-network").on('change',function(a){ 
+                     let selNetvID = $("#node-input-network").val();
+                     let selNetNode = RED.nodes.node(selNetvID);
+                     if(selNetNode===null){
+                         $("#aceMainSel").hide();
+                         return;  
+                     } 
+                     $("#aceMainSel").show();
+                });                
+                
+                $("#aceSelBut").show();
+                
+              })
+              .fail(function( jqxhr, settings, exception ) {
+            	console.log( "Failed to get ag-grid !!!" );
+            });
+            
+
+            if (typeof this.ShowSYS === 'undefined'){
+                this.ShowSYS = false;
+                $("#node-input-ShowSYS").val("false");
+            }else{
+                $("#node-input-ShowSYS").val(this.ShowSYS.toString());
+            }
+                
+        }
+      
+    });
+ </script>   
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <!--------------------------------------      S   E   T       -----------------------------------------------------------------> 
+
+ 
+<script type="text/x-red" data-help-name="aceproIOID in">
+    <p>Siunčiami duomenys į acePRO įrangą.</p>
+    
+        <h3>Inputs</h3>
+            <dl class="message-properties"> <dt>payload     <span class="property-type">number</span></dt> <dd>reikšmė kurią norima užsiųsti.</dd>  </dl>
+
+</script>
+
+
+<script type="text/x-red" data-template-name="aceproIOID in">
+
+    <style> 
+        .aceTblPop{
+            display: none;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
+            position: fixed;
+            background: white;
+            left: 0px;
+            top: 0px;
+        }
+        .aceproSelectIOID {
+            background: #f5f5f5;
+            background-image: -webkit-linear-gradient(top, #f5f5f5, #e8e8e8);
+            background-image: -moz-linear-gradient(top, #f5f5f5, #e8e8e8);
+            background-image: -ms-linear-gradient(top, #f5f5f5, #e8e8e8);
+            background-image: -o-linear-gradient(top, #f5f5f5, #e8e8e8);
+            background-image: linear-gradient(to bottom, #f5f5f5, #e8e8e8);
+            -webkit-border-radius: 6;
+            -moz-border-radius: 6;
+            border-radius: 6px;
+            font-family: Arial;
+            color: #474747;
+            font-size: 20px;
+            padding: 20px 40px 20px 40px;
+            text-decoration: none;
+            text-align: center;
+        }
+        .aceproSelectIOID:hover {
+            background: #adadad;
+            background-image: -webkit-linear-gradient(top, #adadad, #b8b8b8);
+            background-image: -moz-linear-gradient(top, #adadad, #b8b8b8);
+            background-image: -ms-linear-gradient(top, #adadad, #b8b8b8);
+            background-image: -o-linear-gradient(top, #adadad, #b8b8b8);
+            background-image: linear-gradient(to bottom, #adadad, #b8b8b8);
+            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
+        }
+        
+        .TblFooteris{
+            width: 99%;
+            display: flow-root;
+        }       
+        .closeButtonas{
+            float: right;
+        }
+        .infoDivas{
+            float: left;
+        }
+        
+    </style>
+
+
+
+
+    <div class="form-row">
+        <label for="node-input-network"><i class="icon-bookmark"></i> Network</label>
+        <input type="text" id="node-input-network">
+    </div>
+
+    <div id="aceMainSel" style="display: none;">  
+    
+        <div class="form-row">
+            <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+            <input type="text" id="node-input-name" placeholder="Name">
+        </div>
+    
+        <div class="form-row">
+            <label for="node-input-host"><i class="icon-tag"></i> Host</label>
+            <input type="text" id="node-input-host" placeholder="host">
+        </div>    
+        <div class="form-row">
+            <label for="node-input-IOID"><i class="icon-bookmark"></i> IOID</label>
+            <input type="text" id="node-input-IOID">
+        </div>
+        <div class="form-row">
+            <label for="node-input-remark"><i class="icon-bookmark"></i> Remarks</label>
+            <input type="text" id="node-input-remark">
+        </div>   
+        
+        <!--
+        <div class="form-row" style="display:none;">
+            <label for="node-input-ReadOnly"><i class="icon-bookmark"></i> ReadOnly</label>
+            <input type="text" id="node-input-ReadOnly">
+        </div>     
+        -->
+        
+        <div class="form-row">
+            <label for="node-input-ShowSYS"><i class="icon-bookmark"></i> SYS data</label>
+            <select id="node-input-ShowSYS" style="width:75px !important">
+                <option value="false">Hide</option>
+                <option value="true">Show</option>
+            </select>
+        </div>    
+                
+   
+        <div id="aceSelBut" style="display: none;">
+            <div class="form-row">
+                <div id="aceproSelIOIDButt" class="aceproSelectIOID">Select from the list</div>
+            </div>
+        </div>
+
+    </div>
+ 
+
+<script>
+ 
+            var SelNetTable = [];
+            var curIOIDtable = {};
+            
+            var aceNameIndex  = -1;
+            var aceHostIndex = -1;
+            var aceIOIDIndex  = -1;
+            var aceRemarkIndex  = -1;
+            var aceReadOnlyIndex = -1;   
+            
+            var SysIOIDIndex = -1;            
+            
+             $('#node-input-ShowSYS').on('change', function (e) {
+                let optionSelected = $("option:selected", this);
+                let valueSelected = this.value;
+
+                if(valueSelected==="true"){
+                    
+                    $("#aceproSelIOIDButt").hide();
+                    
+                    setTimeout(function(){ 
+ 
+                        bootbox.confirm({
+                            title: "Warning: SYS data was set to be shown!",
+                            message: "Accessing these parameters could lead to unpredictable behavior.</br>Are You sure You know what You're doing?",
+                            buttons: {
+                                confirm: {
+                                    label: 'Yes',
+                                    className: 'btn-danger pull-left' 
+                                },
+                                cancel: {
+                                    label: 'No',
+                                    className: 'btn-success pull-right'
+                                }
+                            },
+                            callback: function (result) {
+                                if(result===false){
+                                    $("#node-input-ShowSYS").val("false");
+                                }
+                                $("#aceproSelIOIDButt").show();
+                            }
+                        });
+                                                
+                    }, 100);
+                    
+                    
+                }
+            });
+            
+            // buvo pasirinkta iš sąrašo
+            $("#aceproSelIOIDButt").on('click',function(a){ 
+                
+                var GridKompoenntas = null;
+                
+                let buttonas = $('<button/>').text("click here or hit ESC button to close");
+                buttonas.addClass('closeButtonas');
+                
+                let infodiv = $('<div/>');
+                infodiv.addClass('infoDivas');
+
+
+                let tblfooteris = $('<div/>');
+                tblfooteris.addClass('TblFooteris');
+                
+                tblfooteris.append(infodiv).append(buttonas);
+
+                let IOIDtbl = $('<div/>');
+
+                IOIDtbl.attr('id', 'aceBusIOIDtbl');
+                IOIDtbl.addClass('ag-theme-balham');
+                IOIDtbl.attr('style', 'height: calc(100vh - 40px);width:99%;');                
+
+                let acpoBodTab = $('<div/>').addClass('aceTblPop').append(tblfooteris).append(IOIDtbl);
+            
+                acpoBodTab.appendTo('body');  
+                 
+                // sunaikinam ir uždarom
+                function uzdarom(){
+ 
+                    // išmetam pranešimą kad reikės palaukti
+                    var WaitCleandialog = bootbox.dialog({
+                        message: '<p class="text-center mb-0"><i class="fa fa-spin fa-cog"></i> Please wait, cleaning memory!</p>',
+                        closeButton: false
+                    }); 
+                    
+                    setTimeout(function(){ 
+                             // unbindinam escape
+                            $(document).off("keydown");
+                            
+                             //Delete the datable object first
+                            GridKompoenntas = null;
+                            
+                            //Remove all the DOM elements
+                            $('#aceBusIOIDtbl').empty();    
+                            acpoBodTab.remove();  
+                            WaitCleandialog.modal('hide');    
+                            
+                        },300);
+                }      
+                      
+                // uždarymo buttonas          
+                buttonas.on('click', () => uzdarom() );                 
+                
+                // jeigu paspaudi 'escape'
+                $(document).on("keydown", (a) =>  {
+                    if(a.keyCode===27){  uzdarom(); }
+                });
+                                
+                // išmetam pranešimą kad reikės palaukti
+                var Waitdialog = bootbox.dialog({
+                                    message: '<p class="text-center mb-0"><i class="fa fa-spin fa-cog"></i> Please wait, preparing data!</p>',
+                                    closeButton: false
+                                 });
+                                 
+                // atrenkam lentelės duomenis
+                let selNetvID = $("#node-input-network").val();
+                let selNetNode = RED.nodes.node(selNetvID);
+                if(selNetNode===null){
+                     acpoBodTab.remove();
+                     uzdarom();
+                     console.error("ERROR: neteork not selected !!");
+                     return;  
+                }                    
+                 SelNetTable = JSON.parse(selNetNode.IOlist);
+                 
+                // surankiojam vardus bei atrenkam indexus
+                let colVardai = [];
+                let columnDefs  = [];
+                let seltt = SelNetTable[0];
+                let ttt ="";
+                let tOpt = {};
+                  for(let i in SelNetTable[0]){
+                        ttt = SelNetTable[0][i];
+                        colVardai.push(ttt);
+          
+                        switch (ttt) {
+                            case 'Module':
+                                        aceHostIndex    = parseInt(i);
+                                        tOpt            = {width: 120, suppressSizeToFit: true};
+                                break;
+                            case 'IOID':
+                                        aceIOIDIndex    = parseInt(i);
+                                        tOpt            = {width: 90, filter:'agNumberColumnFilter', suppressSizeToFit: true};
+                                break;
+                            case 'Space':
+                                        tOpt            = {width: 114, suppressSizeToFit: true};
+                                break;                            
+                            case 'Area':
+                                        tOpt            = {width: 80, suppressSizeToFit: true};
+                                break;
+                            case 'Room':
+                                        tOpt            = {width: 90, suppressSizeToFit: true};
+                                break;
+                            case 'Name':
+                                        aceNameIndex    = parseInt(i);
+                                        tOpt            = {width: 200, minWidth: 100, maxWidth: 300};
+                                break;                             
+                            case 'IOType': 
+                                        tOpt            = {width: 110, suppressSizeToFit: true};
+                                break;
+                            case 'SrcType': 
+                                        tOpt            = {width: 90, suppressSizeToFit: true};
+                                break;
+                            case 'SubID':
+                                        tOpt            = {width: 80, suppressSizeToFit: true};
+                                break;                            
+                            case 'DevIDOrAddr':
+                                        tOpt            = {width: 100, suppressSizeToFit: true};
+                                break;
+                            case 'ChOrTarget':
+                                        tOpt            = {width: 100, suppressSizeToFit: true};
+                                break;
+                            case 'Rem':
+                                        aceRemarkIndex  = parseInt(i);
+                                        tOpt            = {resizable: true};
+                                break;    
+                            case 'ReadOnly':
+                                        aceReadOnlyIndex= parseInt(i);
+                                        tOpt            = {hide: true};
+                                break;
+                            case 'SysVal':
+                                        SysIOIDIndex    = parseInt(i);
+                                        tOpt            = {hide: true};
+                                break;  
+                            default:
+
+                        }
+                        let tset = {headerName: ttt, field: ttt};
+                        $.extend(tset,tOpt);
+                        columnDefs.push(tset);
+                }
+
+
+                // tikrinam ar visi svarbūs laukai yra rasti
+                if(aceNameIndex===-1){  console.error("key 'Name' not found !!!");  return; }
+                if(aceHostIndex===-1){  console.error("key 'Host' not found !!!"); return;  }    
+                if(aceIOIDIndex===-1){  console.error("key 'IOID' not found !!!");  return; }
+    
+                if(aceReadOnlyIndex===-1){  console.error("key 'ReadOnly' not found !!!");  return; }
+                if(SysIOIDIndex===-1){  console.error("key 'SysVal' not found !!!"); return;  }               
+
+                // ištrinam head'erį
+                SelNetTable.splice(0, 1);
+                
+                // filtruojam visus READ ONLY
+                SelNetTable= SelNetTable.filter(el => el[aceReadOnlyIndex] === null );   
+                                
+                // jeigu uždėta varnelė nufiltruojam sisteminius IOID
+                if($("#node-input-ShowSYS").val()==="false"){
+                    SelNetTable= SelNetTable.filter(el => el[SysIOIDIndex] === null );                    
+                }
+                
+                // pašalinam nulinius įrašus
+                SelNetTable= SelNetTable.filter(el => el[0]!==null );  
+                
+                var rowData = [];
+                for(let i in SelNetTable){
+                    let tobj =  {};
+                    for(let ii in SelNetTable[i]){
+                            tobj[colVardai[ii]] = SelNetTable[i][ii];
+                    }
+                    rowData.push(tobj);
+                }
+                
+                var gridOptions = {
+                    defaultColDef: {
+                        resizable: true,
+                        sortable: true,
+                        filter: true
+                    },
+                    floatingFilter: true,
+                    multiSortKey: 'ctrl',
+                    columnDefs: columnDefs,
+                    rowData: rowData,
+                    onGridReady: function(params) {
+                        Waitdialog.modal('hide'); 
+                        $("#aceBusIOIDtbl").focus();
+                    },
+                    onFirstDataRendered: function(params) {
+                        params.api.sizeColumnsToFit();
+                    },
+                    onRowClicked: function(param){
+                        // užpildom duomenis
+                        $('#node-input-name').val(param.data.Name);                
+                        $('#node-input-host').val(param.data.Module);                
+                        $('#node-input-IOID').val(param.data.IOID);              
+                        $('#node-input-remark').val(param.data.Rem);
+                       // $('#node-input-ReadOnly').val( (param.data.ReadOnly!==null)?true:false ); 
+                   
+                        // Uždarom langą
+                        uzdarom();
+                    },
+                    onModelUpdated: function(param){
+                       let rowstodisp = param.api.getModel().rowsToDisplay.length;
+                        let rowsTotal = SelNetTable.length;
+                        if(rowstodisp===rowsTotal){
+                            infodiv.text("Total rows: " + rowsTotal);
+                        }else{
+                            infodiv.text("Rows shown: "+ rowstodisp + ", from: " + rowsTotal);
+                        }
+                    }
+                };
+            
+                
+                var eGridDiv = document.querySelector('#aceBusIOIDtbl');
+                
+                  // atvaizduojam lentelę
+                acpoBodTab.show( 100, () => {              
+                    GridKompoenntas = new agGrid.Grid(eGridDiv, gridOptions);
+                });
+  
+  
+            });
+</script>
+
+
+</script>
+
+
+<!-- Register -->
+<script type="text/javascript">
+
+    RED.nodes.registerType('aceproIOID in', {
+        category: 'ACEPRO',
+        color: '#25A6FF',
+        defaults: {
+            name: {value: "",required: true},
+            host: {value: "",required: true},
+            IOID: {required: true, validate: RED.validators.number()},
+           // ReadOnly : {value: true },
+            network: {value: "",required: true, type: "aceproNet"},
+            remark: {value: ""},
+            ShowSYS : {value: false }
+        },
+        inputs:1,
+        align: "right",
+        icon: "acebus.png",
+        paletteLabel: "SET",
+        label: function() {
+            return (this.name||"SET");
+        },
+        oneditprepare: function () { 
+            
+            if(this.network!==""){
+                $("#aceMainSel").show();
+            }
+     
+            $('<link/>', {
+               rel: 'stylesheet',
+               type: 'text/css',
+               //href: '//cdnjs.cloudflare.com/ajax/libs/ag-grid/19.1.4/styles/ag-grid.css'
+               href: '//unpkg.com/ag-grid-community/dist/styles/ag-grid.css'
+            }).appendTo("head");                 
+            $('<link/>', {
+               rel: 'stylesheet',
+               type: 'text/css',
+              // href: '//cdnjs.cloudflare.com/ajax/libs/ag-grid/19.1.4/styles/ag-theme-balham.css'
+               href: '//unpkg.com/ag-grid-community/dist/styles/ag-theme-balham.css'
+            }).appendTo("head");                   
+             
+     
+            // confirm langas generujamas bootbox
+            $.getScript( "//cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js" );
+            
+            
+             //$.getScript( "//cdnjs.cloudflare.com/ajax/libs/ag-grid/19.1.4/ag-grid-community.min.noStyle.js" ) 
+             $.getScript( "//unpkg.com/ag-grid-community/dist/ag-grid-community.min.noStyle.js") 
+              .done(function( script, textStatus ) {
+                
+                $("#node-input-network").on('change',function(a){ 
+                     let selNetvID = $("#node-input-network").val();
+                     let selNetNode = RED.nodes.node(selNetvID);
+                     if(selNetNode===null){
+                         $("#aceMainSel").hide();
+                         return;  
+                     } 
+                     $("#aceMainSel").show();
+                });                
+                
+                $("#aceSelBut").show();
+                
+              })
+              .fail(function( jqxhr, settings, exception ) {
+            	console.log( "Failed to get ag-grid !!!" );
+            });
+            
+
+            if (typeof this.ShowSYS === 'undefined'){
+                this.ShowSYS = false;
+                $("#node-input-ShowSYS").val("false");
+            }else{
+                $("#node-input-ShowSYS").val(this.ShowSYS.toString());
+            }
+    
+        }
+      
+    });
+ </script>   
+ 
+ 
+ 
+ 
