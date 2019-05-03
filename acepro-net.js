@@ -205,7 +205,7 @@ module.exports = function(RED)
                 
                 if(NewRX_Event && (AceObj.IOIDState===0)){
                     stateMsg = NotifyTempl.GautasPak;
-                    stateMsg.text = parseFloat(AceObj.ActualVAL.toFixed(3)); 
+                    stateMsg.text = parseFloat(AceObj.ActualVAL).toFixed(3); 
                     AceObj.LastNotfSt = AcOS_Ready + 1;
                    // aktyvuojam pagrindinius callback'us
                    if(prCB==null) prCB = AceObj.CB;
@@ -227,7 +227,7 @@ module.exports = function(RED)
                                 stateMsg = NotifyTempl.LaukiamPak;
                                 SetStUpdNeededAfter(AceObj,0);
                                 currNotfSt +=2;
-                                stateMsg.text = parseFloat(AceObj.ActualVAL.toFixed(3));                                
+                                stateMsg.text = parseFloat(AceObj.ActualVAL).toFixed(3);                                
                                 
                             }else{
                                 //reikia apdoroti gaunamas klaidas ir pagal tai pakesiti statusą
@@ -274,7 +274,7 @@ module.exports = function(RED)
                     break;
                     case AcOS_SetTx:
                         stateMsg = NotifyTempl.SetPrg;
-                        stateMsg.text = "Writing...->" + parseFloat(AceObj.TxVal.toFixed(3)); 
+                        stateMsg.text = "Writing...->" + parseFloat(AceObj.TxVal).toFixed(3); 
                     break;
                     case AcOS_erTxTO: 
                         stateMsg = NotifyTempl.ErrSet;
