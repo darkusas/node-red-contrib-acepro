@@ -78,6 +78,7 @@ module.exports = function(RED)
                       if(SendAll){
                          var GrSt = 0;
                          var td = {};
+                         var p3 = {};
                          
                          var tval = 0;
                          var tst = -1;
@@ -101,6 +102,8 @@ module.exports = function(RED)
                             nKey = grupe[raktas].newKey;
                              
                             td[nKey] = tval;
+                            p3[grupe[raktas].IOID]  = tval;
+                            
                             if(tst !== 0 ) GrSt = tst;
                             
                             if(tst===0){
@@ -141,9 +144,11 @@ module.exports = function(RED)
                             maxVal  : maxVal,
                             maxName : maxName,
                             avrVal  : avrVal
-                        };                     
+                        };  
                         
+
                         dataMsg[0].payload2 = td;
+                        dataMsg[0].payload3 = p3;
                         
                      }   
                      
