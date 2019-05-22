@@ -1,0 +1,223 @@
+<!--
+  Copyright Darius Aleškaitis @ MB ALDARNA (2019 05 20)
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  http://www.apache.org/licenses/LICENSE-2.0
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+ <!--------------------------------------      G   E   T       -----------------------------------------------------------------> 
+ 
+<script type="text/x-red" data-help-name="aceproMultiIOID out">
+    <p><b>Gaunami duomenys iš acePRO įrangos. Masinis nuskaitymas.</b></p>
+
+    <h3>Outputs</h3>
+        <ol class="node-ports">
+            <li>Out1(viršutinis): Duomenys
+                <dl class="message-properties"> <dt>payload     <span class="property-type">number</span></dt> <dd>gaunama kintamojo reikšmė.</dd>  </dl>
+                <dl class="message-properties"> <dt>topic       <span class="property-type">string</span></dt> <dd>nurodo adresą iš kur buvo gauta reikšmė.</dd>  </dl>                
+                <dl class="message-properties"> <dt>host        <span class="property-type">string</span></dt> <dd>nurodo iš kurio modulio gauti duomenys.</dd>  </dl>                
+                <dl class="message-properties"> <dt>IOID        <span class="property-type">number</span></dt> <dd>nurodo kuriam IOID priklauso gauta reikšmė.</dd>  </dl>
+                <dl class="message-properties"> <dt>IOIDstate   <span class="property-type">number</span></dt> <dd>nurodo klaidos kodą: 0 = nėra klaidų.</dd>  </dl>                
+            </li>
+            <li>Out2(apatinis): Statusas
+                <dl class="message-properties"> <dt>payload     <span class="property-type">string</span></dt> <dd>Statusas tekstine išraiška.</dd>  </dl>
+                <dl class="message-properties"> <dt>topic       <span class="property-type">string</span></dt> <dd>nurodo adresą iš kur buvo gauta reikšmė.</dd>  </dl>  
+                <dl class="message-properties"> <dt>Value       <span class="property-type">number</span></dt> <dd>gaunama kintamojo reikšmė.</dd>  </dl>  
+                <dl class="message-properties"> <dt>host        <span class="property-type">string</span></dt> <dd>nurodo iš kurio modulio gauti duomenys.</dd>  </dl>                
+                <dl class="message-properties"> <dt>IOID        <span class="property-type">number</span></dt> <dd>nurodo kuriam IOID priklauso gauta reikšmė.</dd>  </dl>
+                <dl class="message-properties"> <dt>IOIDstate   <span class="property-type">number</span></dt> <dd>nurodo klaidos kodą: 0 = nėra klaidų.</dd>  </dl> 
+            </li>
+        </ol>
+    
+    <h3>Details</h3>
+    <p><b>Out1(viršutinis): Duomenys</b></p>
+    <p><code>msg.payload</code>gaunama kintamojo reikšmė.</p>
+    <p><code>msg.topic</code> nurodo adresą iš kur buvo gauta reikšmė.</p>
+    <p><code>msg.host</code> nurodo iš kurio modulio gauti duomenys.</p>
+    <p><code>msg.IOID</code> nurodo kuriam IOID priklauso gauta reikšmė.</p>
+    <p><code>msg.IOIDstate</code> nurodo klaidos kodą: 0 = nėra klaidų.</p>
+    </br>
+    <p><b>Out2(apatinis): Statusas</b></p>
+    <p><code>msg.payload</code>Statusas tekstine išraiška.</p>
+    <p><code>msg.topic</code> nurodo adresą iš kur buvo gauta reikšmė.</p>
+    <p><code>msg.Value</code> gaunama kintamojo reikšmė.</p>
+    <p><code>msg.host</code> nurodo iš kurio modulio gauti duomenys.</p>
+    <p><code>msg.IOID</code> nurodo kuriam IOID priklauso gauta reikšmė.</p>
+    <p><code>msg.IOIDstate</code> nurodo klaidos kodą: 0 = nėra klaidų.</p>
+</script>
+
+<script type="text/x-red" data-template-name="aceproMultiIOID out">
+
+        <div class="form-row">
+            <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+            <input type="text" id="node-input-name" placeholder="Name">
+        </div>
+
+        <div class="form-row">
+            <label for="node-input-network"><i class="icon-bookmark"></i> Network</label>
+            <input type="text" id="node-input-network">
+        </div>
+
+        <div class="form-row">
+            <label for="node-input-SendAll"><i class="icon-bookmark"></i> Siųsti viską</label>
+            <select id="node-input-SendAll" style="width:75px !important">
+                <option value="false">False</option>
+                <option value="true">True</option>
+            </select>
+        </div>    
+                
+        <div class="form-row">
+            <label for="node-input-config"><i class="icon-tag"></i> Config:</label>
+            <textarea type="text" style="width:100%;" id="node-input-config" rows="28" placeholder="[   ['Host',10307,'name'],             ['Host',10308,'name2'],      ...]"></textarea>
+        </div>
+    
+
+</script>
+ 
+<!-- Register -->
+<script type="text/javascript">
+
+    RED.nodes.registerType('aceproMultiIOID out', {
+        category: 'ACEPRO',
+        color: '#6ccb6e',
+        defaults: {
+            name: {value: "multiGET",required: true},
+            network: {value: "",required: true, type: "aceproNet"},
+            config: {value: "",required: true,
+                     validate : (conf)=> {
+                                    try{
+                                        let dpar = JSON.parse(conf);
+                                        for(var i in dpar){
+                                            if(typeof dpar[i][0] !== 'string') return false;
+                                            if(typeof dpar[i][1] !== 'number') return false;
+                                        }   
+                                        return true;
+                                    }catch(a){
+                                        return false;
+                                    }
+                                                                        
+                    }
+               },
+            SendAll : {value: false ,required: true }
+        },
+        outputs:2,
+        align: "left",
+        icon: "acebus.png",
+        paletteLabel: "multiGET",
+        label: function() {
+            return (this.name||"multiGET");
+        },
+        oneditprepare: function () {
+
+            if (typeof this.SendAll === 'undefined'){
+                this.SendAll = false;
+                $("#node-input-SendAll").val("false");
+            }else{
+                $("#node-input-SendAll").val(this.SendAll.toString());
+            }
+                
+        }
+      
+    });
+ </script>   
+ 
+ 
+ 
+ <!--------------------------------------      S   E   T       -----------------------------------------------------------------> 
+
+ 
+<script type="text/x-red" data-help-name="aceproMultiIOID in">
+    <p>Siunčiami duomenys į acePRO įrangą. Masinis įrašymas.</p>
+    
+        <h3>Inputs</h3>
+            <dl class="message-properties"> 
+                <dt>payload     <span class="property-type">number</span></dt> 
+                    <dd>reikšmė kurią norima užsiųsti į visus IOID nurodytus config'e.</dd>  
+            </dl>
+
+</script>
+
+
+<script type="text/x-red" data-template-name="aceproMultiIOID in">
+
+        <div class="form-row">
+            <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+            <input type="text" id="node-input-name" placeholder="Name">
+        </div>
+        
+        <div class="form-row">
+            <label for="node-input-network"><i class="icon-bookmark"></i> Network</label>
+            <input type="text" id="node-input-network">
+        </div>
+
+        <div class="form-row">
+            <label for="node-input-SendAll"><i class="icon-bookmark"></i> Siųsti viską</label>
+            <select id="node-input-SendAll" style="width:75px !important">
+                <option value="false">False</option>
+                <option value="true">True</option>
+            </select>
+        </div>    
+                
+        <div class="form-row">
+            <label for="node-input-config"><i class="icon-tag"></i> Config:</label>
+            <textarea type="text" style="width:100%;" id="node-input-config" rows="28" placeholder="[   ['Host',10307,'name'],             ['Host',10308,'name2'],      ...]"></textarea>
+        </div>
+    
+</script>
+
+
+<!-- Register -->
+<script type="text/javascript">
+
+    RED.nodes.registerType('aceproMultiIOID in', {
+        category: 'ACEPRO',
+        color: '#6ccb6e',
+        defaults: {
+            name: {value: "multiSET",required: true},
+            network: {value: "",required: true, type: "aceproNet"},
+            config: {value: "",required: true,
+                     validate : (conf)=> {
+                                    try{
+                                        let dpar = JSON.parse(conf);
+                                        for(var i in dpar){
+                                            if(typeof dpar[i][0] !== 'string') return false;
+                                            if(typeof dpar[i][1] !== 'number') return false;
+                                        }   
+                                        return true;
+                                    }catch(a){
+                                        return false;
+                                    }
+                    }
+               },
+            SendAll : {value: false ,required: true }
+        },
+        inputs:1,
+        align: "right",
+        icon: "acebus.png",
+        paletteLabel: "multiSET",
+        label: function() {
+            return (this.name||"multiSET");
+        },
+        oneditprepare: function () {
+
+            if (typeof this.SendAll === 'undefined'){
+                this.SendAll = false;
+                $("#node-input-SendAll").val("false");
+            }else{
+                $("#node-input-SendAll").val(this.SendAll.toString());
+            }
+                
+        }
+      
+    });
+ </script>   
+ 
+ 
+ 
+ 

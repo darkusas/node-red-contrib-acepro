@@ -720,7 +720,7 @@ module.exports = function(RED)
                 
         
         
-        // Funkcija kurios pagalba  registruojami IOID node'ai
+        // Funkcija kurios pagalba  registruojami IOID node'ai  --------------------------------------------------------
         node.RegisterIOID = function(IOIDobj, nCallBack){
             
             // sugeneruojam CRC32 kuris bus naudojamas raktui bei paketų atpažinimui
@@ -811,7 +811,7 @@ module.exports = function(RED)
             IOIDobj_list[key].CB.push(nCallBack);
         }
         
-         // Išregistruojam nenaudojamą node'ą
+         // Išregistruojam nenaudojamą node'ą  --------------------------------------------------------
         node.UnRegisterIOID = function(IOIDobj, nCallBack){
             // sugeneruojam CRC32 kuris bus naudojamas raktui bei paketų atpažinimui
             let dstCRC = crc32_acepro(new Buffer(IOIDobj.host,'ascii'));
