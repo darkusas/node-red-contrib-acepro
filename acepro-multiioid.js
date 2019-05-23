@@ -75,7 +75,8 @@ module.exports = function(RED)
                     
                     
                     if( grupe[curTopic] === undefined){
-                        console.log("multiIOID ERR1. curTopic:" + curTopic);
+                        console.log("multiIOID ERR1. dataMsg[0]:");
+                        console.log(dataMsg[0]);
                         return null;
                     } 
                     
@@ -166,7 +167,8 @@ module.exports = function(RED)
                     curTopic = dataMsg[1].topic;
                     
                     if( grupe[curTopic] === undefined){
-                        console.log("multiIOID ERR2. curTopic:" + curTopic);
+                        console.log("multiIOID ERR1. dataMsg[1]:");
+                        console.log(dataMsg[1]);
                         return null;
                     } 
                     
