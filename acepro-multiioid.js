@@ -71,7 +71,14 @@ module.exports = function(RED)
                  
                  // įrašom dabar gautas reikšmes, ir sukuriam grupes jeigu to settingai reikalauja
                  if(dataMsg[0] !== null){
-                    curTopic = dataMsg[0].topic;                     
+                    curTopic = dataMsg[0].topic;  
+                    
+                    
+                    if( grupe[curTopic] === undefined){
+                        console.log("multiIOID ERR1. curTopic:" + curTopic);
+                        return null;
+                    } 
+                    
                     grupe[curTopic].St = dataMsg[0].IOIDstate;
                     grupe[curTopic].LastVAL = dataMsg[0].payload;
                     
@@ -157,8 +164,14 @@ module.exports = function(RED)
                 
                  if(dataMsg[1] !== null){
                     curTopic = dataMsg[1].topic;
+                    
+                    if( grupe[curTopic] === undefined){
+                        console.log("multiIOID ERR2. curTopic:" + curTopic);
+                        return null;
+                    } 
+                    
                     grupe[curTopic].St = dataMsg[1].IOIDstate;
-                    grupe[curTopic].LastVAL = dataMsg[1].Value;
+                   // grupe[curTopic].LastVAL = dataMsg[1].Value;
                     
                       if(SendAll){
                          let GrSt = 0;
