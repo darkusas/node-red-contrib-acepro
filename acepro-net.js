@@ -163,8 +163,16 @@ module.exports = function(RED)
             // tikrinam ar CB yra masyvas
             if( Object.prototype.toString.call( CB ) === '[object Array]' ) {
                 let CBlstLen = CB.length;
+                let t_stateMsg = null;
+                let t_dataMsg = null;
                 for (var i = 0; i < CBlstLen; i++) {
-                    CB[i](stateMsg, dataMsg);
+                    
+                    // 2019 05 23
+                    //----   Kad nesiųstų referencų     ----
+                    t_stateMsg = JSON.parse(JSON.stringify(stateMsg));
+                    t_dataMsg = JSON.parse(JSON.stringify(dataMsg));
+                    
+                    CB[i](t_stateMsg, t_dataMsg);
                 }                
             }else{
                 CB(stateMsg, dataMsg);
