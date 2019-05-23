@@ -167,16 +167,12 @@ module.exports = function(RED)
                 let t_dataMsg = null;
                 for (var i = 0; i < CBlstLen; i++) {
                     
+                    
                     // 2019 05 23
                     
                     //----   Kad nesiųstų referencų   V1  ----
-                   // t_stateMsg = JSON.parse(JSON.stringify(stateMsg));
-                   // t_dataMsg = JSON.parse(JSON.stringify(dataMsg));
-                    
-                    
-                     //----   Kad nesiųstų referencų   V2  ----
-                    t_stateMsg = Object.assign({}, stateMsg);
-                    t_dataMsg = Object.assign({}, dataMsg);
+                   t_stateMsg = JSON.parse(JSON.stringify(stateMsg));
+                   t_dataMsg = JSON.parse(JSON.stringify(dataMsg));
                     
                     CB[i](t_stateMsg, t_dataMsg);
                 }                
