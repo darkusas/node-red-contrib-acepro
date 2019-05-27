@@ -31,6 +31,11 @@ module.exports = function(RED)
         
         
         // ----- 2019 05 27 --------------------
+        
+        
+        var Last_stateMsg = null;
+        var Last_dataMsg = null;
+        
         const MinPeriod = 2000;      // [ms] - minimalus periodas kada duomenys perduodami toliau
         var   Timeris = null;       // taimeris skirtas riboti
         
@@ -41,8 +46,8 @@ module.exports = function(RED)
         
         var Apdoroti = function()
         {
-            let dataMsg = null;            
-            let stateMsg = null;
+            let dataMsg = Last_dataMsg;            
+            let stateMsg = Last_stateMsg;
 
             // jeigu buvo užstatytas taimeris tuomet ištrinam 
             if(Timeris !== null){
@@ -50,17 +55,7 @@ module.exports = function(RED)
                 Timeris = null;                
             }
 
-            // išmetam pasenusę informaciją ir imam tik aktualiausią
-            if(msgStQue.length >0){
-                stateMsg = msgStQue[msgStQue.length-1];
-                msgStQue = [];
-            }
-            
-            if(msgQue.length >0){
-                dataMsg = msgQue[msgQue.length-1];
-                msgQue = [];
-            }
-            
+
             // jeigu nėra aktualios informacijos išeinam
             if((dataMsg == null)&&(stateMsg == null)) return null;
             
@@ -245,8 +240,9 @@ module.exports = function(RED)
         var nCallBack = function(stateMsg, dataMsg){
          
 
-            if(stateMsg!== null) msgStQue.push(stateMsg);
-            if(dataMsg!== null) msgStQue.push(dataMsg);
+            Last_stateMsg = stateMsg;
+            Last_dataMsg = dataMsg;
+
             
             if(Timeris==null) {
                 Apdoroti();
