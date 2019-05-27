@@ -36,7 +36,7 @@ module.exports = function(RED)
         var Last_stateMsg = null;
         var Last_dataMsg = null;
         
-        const MinPeriod = 2000;      // [ms] - minimalus periodas kada duomenys perduodami toliau
+        const MinPeriod = 1000;      // [ms] - minimalus periodas kada duomenys perduodami toliau
         var   Timeris = null;       // taimeris skirtas riboti
         
         // visus gaunamus paketus dedam į eilę apdorojimui
