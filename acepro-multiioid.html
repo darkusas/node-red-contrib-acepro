@@ -71,6 +71,13 @@
                 <option value="true">True</option>
             </select>
         </div>    
+        <div class="form-row">
+            <label for="node-input-LiveStatus"><i class="icon-bookmark"></i> Rodyti statusą</label>
+            <select id="node-input-LiveStatus" style="width:75px !important">
+                <option value="false">False</option>
+                <option value="true">True</option>
+            </select>
+        </div>        
                 
         <div class="form-row">
             <label for="node-input-config"><i class="icon-tag"></i> Config:</label>
@@ -104,7 +111,8 @@
                                                                         
                     }
                },
-            SendAll : {value: false ,required: true }
+            SendAll : {value: false ,required: true },
+            LiveStatus : {value: false ,required: true }
         },
         outputs:2,
         align: "left",
@@ -163,7 +171,14 @@
                 <option value="true">True</option>
             </select>
         </div>    
-                
+        <div class="form-row">
+            <label for="node-input-LiveStatus"><i class="icon-bookmark"></i> Rodyti statusą</label>
+            <select id="node-input-LiveStatus" style="width:75px !important">
+                <option value="false">False</option>
+                <option value="true">True</option>
+            </select>
+        </div>    
+        
         <div class="form-row">
             <label for="node-input-config"><i class="icon-tag"></i> Config:</label>
             <textarea type="text" style="width:100%;" id="node-input-config" rows="28" placeholder="[   ['Host',10307,'name'],             ['Host',10308,'name2'],      ...]"></textarea>
@@ -195,7 +210,8 @@
                                     }
                     }
                },
-            SendAll : {value: false ,required: true }
+            SendAll : {value: false ,required: true },
+            LiveStatus : {value: false ,required: true }
         },
         inputs:1,
         align: "right",

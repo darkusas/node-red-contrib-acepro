@@ -147,6 +147,14 @@
                 <option value="true">Show</option>
             </select>
         </div>    
+        <div class="form-row">
+            <label for="node-input-LiveStatus"><i class="icon-bookmark"></i> Rodyti statusą</label>
+            <select id="node-input-LiveStatus" style="width:75px !important">
+                <option value="false">False</option>
+                <option value="true">True</option>
+            </select>
+        </div>        
+                    
                 
    
         <div id="aceSelBut" style="display: none;">
@@ -448,7 +456,8 @@
            // ReadOnly : {value: true },
             network: {value: "",required: true, type: "aceproNet"},
             remark: {value: ""},
-            ShowSYS : {value: false }
+            ShowSYS : {value: false },
+            LiveStatus : {value: false ,required: true }
         },
         outputs:2,
         align: "left",
@@ -631,6 +640,14 @@
                 <option value="true">Show</option>
             </select>
         </div>    
+        <div class="form-row">
+            <label for="node-input-LiveStatus"><i class="icon-bookmark"></i> Rodyti statusą</label>
+            <select id="node-input-LiveStatus" style="width:75px !important">
+                <option value="false">False</option>
+                <option value="true">True</option>
+            </select>
+        </div>        
+                    
                 
    
         <div id="aceSelBut" style="display: none;">
@@ -935,7 +952,8 @@
            // ReadOnly : {value: true },
             network: {value: "",required: true, type: "aceproNet"},
             remark: {value: ""},
-            ShowSYS : {value: false }
+            ShowSYS : {value: false },
+            LiveStatus : {value: false ,required: true }
         },
         inputs:1,
         align: "right",

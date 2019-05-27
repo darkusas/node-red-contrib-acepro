@@ -23,6 +23,13 @@ module.exports = function(RED)
         var node = this;
         var network = RED.nodes.getNode(config.network);
           
+
+    
+        var SendAll = (config.SendAll === "true") || false;
+        var LiveStatus = (config.LiveStatus === "true") || false;
+       
+       
+       console.log(LiveStatus);
        
         // tikrinam ar sukonfigūruotas networkas
         if(network == null) {node.error("[Critical] - ACEPRO network is not set"); return;}
@@ -39,11 +46,7 @@ module.exports = function(RED)
         const MinPeriod = 1000;      // [ms] - minimalus periodas kada duomenys perduodami toliau
         var   Timeris = null;       // taimeris skirtas riboti
         
-        // visus gaunamus paketus dedam į eilę apdorojimui
-        var msgStQue = [];        
-        var msgQue = [];
 
-        
         var Apdoroti = function()
         {
             let dataMsg = Last_dataMsg;            
@@ -192,7 +195,7 @@ module.exports = function(RED)
                  node.send(dataMsg);
              }
              // jeigu atėjo statuso pasikeitimas
-              if(stateMsg !== null){ 
+              if((stateMsg !== null) && (LiveStatus === true)){ 
                  // nustatom naują statusą
                  node.status(stateMsg);
              }                      
@@ -202,8 +205,7 @@ module.exports = function(RED)
         //--------------------------------------
         
         
-    
-        var SendAll = (config.SendAll === "true") || false;
+
     
         let dpar = JSON.parse(config.config);
         for(var i in dpar){
@@ -231,7 +233,11 @@ module.exports = function(RED)
         
        
         // nustatom pirminį statusą
-        node.status({fill:"yellow",shape:"ring",text:"Initializing ..."});
+        if(LiveStatus === true){
+            node.status({fill:"yellow",shape:"ring",text:"Initializing ..."}); 
+        }else{
+            node.status({text:""}); 
+        }
         
         
 

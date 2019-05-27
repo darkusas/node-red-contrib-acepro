@@ -23,12 +23,19 @@ module.exports = function(RED)
         var node = this;
         var network = RED.nodes.getNode(config.network);
           
-       
+        var LiveStatus = (config.LiveStatus === "true") || false;
+               
         // tikrinam ar sukonfigūruotas networkas
         if(network == null) {node.error("[Critical] - ACEPRO network is not set"); return;}
         
+
         // nustatom pirminį statusą
-        node.status({fill:"yellow",shape:"ring",text:"Initializing ..."});
+        if(LiveStatus === true){
+            node.status({fill:"yellow",shape:"ring",text:"Initializing ..."}); 
+        }else{
+            node.status({text:""}); 
+        }
+        
         
         // pagrindinis CallBack'as ateinantis iš aceBUS magistralės
         var nCallBack = function(stateMsg, dataMsg){
@@ -39,7 +46,7 @@ module.exports = function(RED)
                  node.send(dataMsg);
              }
              // jeigu atėjo statuso pasikeitimas
-              if(stateMsg !== null){ 
+              if((stateMsg !== null)&& (LiveStatus === true)){ 
                  // nustatom naują statusą
                  node.status(stateMsg);
              }        
