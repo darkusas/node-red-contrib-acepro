@@ -28,46 +28,49 @@ module.exports = function(RED)
         if(network == null) {node.error("[Critical] - ACEPRO network is not set"); return;}
             
         var grupe = [];
-    
-        var SendAll = (config.SendAll === "true") || false;
-    
-        let dpar = JSON.parse(config.config);
-        for(var i in dpar){
-            let host = dpar[i][0];
-            let IOID = dpar[i][1];
-            let newKey = dpar[i][2] || "";
-            newKey = newKey.replace(/ /g,"_");
-            
-            // paruošiam topic'ą
-            let topic = host + "_" + IOID;
-            
-            // pasiruošiam struktūrą
-             grupe[topic] = {           
-                      host      : host,     // host įrenginys
-                      IOID      : IOID,     // IOID
-                      newKey    : newKey,   // raktas kuris bus priskirtas išvedime
-                      St        : -1,       // Paskutinis žinomas statusas
-                      LastVAL   : 0.0       // Paskutinė žinoma reikmė
-             };
-            
-        }  
+        
+        
+        // ----- 2019 05 27 --------------------
+        const MinPeriod = 2000;      // [ms] - minimalus periodas kada duomenys perduodami toliau
+        var   Timeris = null;       // taimeris skirtas riboti
+        
+        // visus gaunamus paketus dedam į eilę apdorojimui
+        var msgStQue = [];        
+        var msgQue = [];
 
-        // laikinas debuinimui
-      //  console.log(grupe);
         
-       
-        // nustatom pirminį statusą
-        node.status({fill:"yellow",shape:"ring",text:"Initializing ..."});
-        
-        // pagrindinis CallBack'as ateinantis iš aceBUS magistralės
-        var nCallBack = function(stateMsg, dataMsg){
-         
-            let curTopic = "";
+        var Apdoroti = function()
+        {
+            let dataMsg = null;            
+            let stateMsg = null;
+
+            // jeigu buvo užstatytas taimeris tuomet ištrinam 
+            if(Timeris !== null){
+                clearTimeout(Timeris);
+                Timeris = null;                
+            }
+
+            // išmetam pasenusę informaciją ir imam tik aktualiausią
+            if(msgStQue.length >0){
+                stateMsg = msgStQue[msgStQue.length-1];
+                msgStQue = [];
+            }
             
-            // jeigu atėjo nauji duomenys
-             if(dataMsg !== null){ 
-                 // persiunčiam duomenis į sekantį node'ą
-                 
+            if(msgQue.length >0){
+                dataMsg = msgQue[msgQue.length-1];
+                msgQue = [];
+            }
+            
+            // jeigu nėra aktualios informacijos išeinam
+            if((dataMsg == null)&&(stateMsg == null)) return null;
+            
+                // atliekam skaičiaivmus ir atvaizdavimus   
+                let curTopic = "";
+                
+                // jeigu atėjo nauji duomenys
+                 if(dataMsg !== null){ 
+                     // persiunčiam duomenis į sekantį node'ą
+                     
                  
                  // įrašom dabar gautas reikšmes, ir sukuriam grupes jeigu to settingai reikalauja
                  if(dataMsg[0] !== null){
@@ -190,8 +193,6 @@ module.exports = function(RED)
                  }
                 
                  
-
-                 
                  // siunčiam į kitą node'ą
                  node.send(dataMsg);
              }
@@ -199,8 +200,100 @@ module.exports = function(RED)
               if(stateMsg !== null){ 
                  // nustatom naują statusą
                  node.status(stateMsg);
-             }        
+             }                      
+            
+        }      
+        
+        //--------------------------------------
+        
+        
+    
+        var SendAll = (config.SendAll === "true") || false;
+    
+        let dpar = JSON.parse(config.config);
+        for(var i in dpar){
+            let host = dpar[i][0];
+            let IOID = dpar[i][1];
+            let newKey = dpar[i][2] || "";
+            newKey = newKey.replace(/ /g,"_");
+            
+            // paruošiam topic'ą
+            let topic = host + "_" + IOID;
+            
+            // pasiruošiam struktūrą
+             grupe[topic] = {           
+                      host      : host,     // host įrenginys
+                      IOID      : IOID,     // IOID
+                      newKey    : newKey,   // raktas kuris bus priskirtas išvedime
+                      St        : -1,       // Paskutinis žinomas statusas
+                      LastVAL   : 0.0       // Paskutinė žinoma reikmė
+             };
+            
+        }  
+
+        // laikinas debuinimui
+      //  console.log(grupe);
+        
+       
+        // nustatom pirminį statusą
+        node.status({fill:"yellow",shape:"ring",text:"Initializing ..."});
+        
+        
+
+        
+        // pagrindinis CallBack'as ateinantis iš aceBUS magistralės
+        var nCallBack = function(stateMsg, dataMsg){
          
+
+            if(stateMsg!== null) msgStQue.push(stateMsg);
+            if(dataMsg!== null) msgStQue.push(dataMsg);
+            
+            if(Timeris==null) {
+                Apdoroti();
+                Timeris = setTimeout(Apdoroti, MinPeriod);
+            }else{
+                
+            
+                // atliekam skaičiaivmus ir atvaizdavimus   
+                let curTopic = "";
+                
+                // jeigu atėjo nauji duomenys
+                 if(dataMsg !== null){
+                     // persiunčiam duomenis į sekantį node'ą
+                     
+                     
+                     // įrašom dabar gautas reikšmes, ir sukuriam grupes jeigu to settingai reikalauja
+                     if(dataMsg[0] !== null){
+                        curTopic = dataMsg[0].topic;  
+                        
+                        if( grupe[curTopic] === undefined){
+                            console.log("multiIOID ERR1. dataMsg[0]:");
+                            console.log(dataMsg[0]);
+                            return null;
+                        } 
+                        
+                        grupe[curTopic].St = dataMsg[0].IOIDstate;
+                        grupe[curTopic].LastVAL = dataMsg[0].payload;
+                        
+                     }
+                    
+                     if(dataMsg[1] !== null){
+                        curTopic = dataMsg[1].topic;
+                        
+                        if( grupe[curTopic] === undefined){
+                            console.log("multiIOID ERR1. dataMsg[1]:");
+                            console.log(dataMsg[1]);
+                            return null;
+                        } 
+                        
+                        grupe[curTopic].St = dataMsg[1].IOIDstate;
+                     }
+                
+                 }
+            
+            }
+            
+            
         };
     
         

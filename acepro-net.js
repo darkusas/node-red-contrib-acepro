@@ -174,6 +174,9 @@ module.exports = function(RED)
                    t_stateMsg = JSON.parse(JSON.stringify(stateMsg));
                    t_dataMsg = JSON.parse(JSON.stringify(dataMsg));
                     
+                    
+                    // Deja http://jsben.ch/ks8c9 kitas variatas nors ir geresnis bet neveikia
+                    
                     CB[i](t_stateMsg, t_dataMsg);
                 }                
             }else{
