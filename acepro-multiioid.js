@@ -29,7 +29,7 @@ module.exports = function(RED)
         var LiveStatus = (config.LiveStatus === "true") || false;
        
        
-       console.log(LiveStatus);
+      // console.log(LiveStatus);
        
         // tikrinam ar sukonfigūruotas networkas
         if(network == null) {node.error("[Critical] - ACEPRO network is not set"); return;}

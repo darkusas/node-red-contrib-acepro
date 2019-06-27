@@ -862,8 +862,20 @@ module.exports = function(RED)
             let key = dstCRC.toString(16).toUpperCase() +"_"+ sender.IOID;
 
             // Surandam objektą
-            if(IOIDobj_list[key] !== undefined){
-                let AceObj = IOIDobj_list[key];
+            let AceObj = IOIDobj_list[key];
+            if(AceObj !== undefined){
+                
+                
+            // jeigu yra Disablintas vadinasi įrašinėti negalima
+                if(AceObj.IOIDState===-1) return;
+                               
+                
+            // 2019 06 27 - jeigu nustatoma reikšmė jau yra tokia tai nesiunčiam
+                if(AceObj.RxVal === data.payload){
+                    AceObj.TxVal = data.payload;
+                    AceObj.ActualVAL = data.payload;
+                    return;
+                }
                 
                 //console.log(AceObj);
                 
@@ -875,9 +887,7 @@ module.exports = function(RED)
                 }                
                 */
                 
-                // jeigu yra Disablintas vadinasi įrašinėti negalima
-                if(AceObj.IOIDState===-1) return;
-                
+     
                 AceObj.St = AcOS_SetTx;
                 AceObj.TxVal = data.payload
                 AceObj.TxCMDTime = (Date.now() / 1000);
