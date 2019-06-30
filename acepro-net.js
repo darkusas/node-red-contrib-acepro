@@ -122,7 +122,7 @@ module.exports = function(RED)
 
 
         var name = config.name;
-        var nameCrc = crc32_acepro(new Buffer(name,'ascii'));
+        var nameCrc = crc32_acepro(new Buffer(name + (Math.random()*10000).toFixed(), 'ascii'));
         var BrCastAddr = config.BrAddress;
         var port = config.port;
         var IOIDobj_list = []; // saugojamos pagrindinės struktūros
