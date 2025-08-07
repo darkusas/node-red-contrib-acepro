@@ -307,6 +307,13 @@ module.exports = function(RED)
       
         // kai NODE yra uždaroma arba restartuojama, reikia išsiregistruoti iš sąrašo, išregistruojam visus grupei priklausančius IOID
         this.on("close", function() {
+            // Clear timer if exists
+            if (Timeris) {
+                clearTimeout(Timeris);
+                Timeris = null;
+            }
+            
+            // Unregister all IOIDs
             for(var raktas in grupe){
                 network.UnRegisterIOID(grupe[raktas], nCallBack); 
             }

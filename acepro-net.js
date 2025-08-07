@@ -122,7 +122,7 @@ module.exports = function(RED)
 
 
         var name = config.name;
-        var nameCrc = crc32_acepro(new Buffer(name + (Math.random()*10000).toFixed(), 'ascii'));
+        var nameCrc = crc32_acepro(Buffer.from(name + (Math.random()*10000).toFixed(), 'ascii'));
         var BrCastAddr = config.BrAddress;
         var port = config.port;
         var IOIDobj_list = []; // saugojamos pagrindinės struktūros
@@ -654,22 +654,33 @@ module.exports = function(RED)
        // registruojam gavimo įvykį  ------------------  -------------------
        srv.on('message', function (message, remote) {
             
-            var RxPak = {
-              CMD:      message.readUInt32BE(0), //.toString(16),
-              SRC:      message.readUInt32BE(4), //.toString(16),
-              DST:      message.readUInt32BE(8), //.toString(16),      
-              State:    message.readInt32BE(12),       
-              IOID:     message.readUInt32BE(16), 
-              Val:      message.readDoubleBE(20)
-            };
+            // Basic input validation to prevent crashes from malformed packets
+            if (!message || message.length < 28) {
+                // Invalid packet size, ignore
+                return;
+            }
             
-            // pirmiausia sugeneruojam raktą
-            let key = RxPak.SRC.toString(16).toUpperCase() +"_"+ RxPak.IOID;
-            
-            // Tikrinam ar mus domina šis paketas
-            if(IOIDobj_list[key] !== undefined){ 
-                // Jeigu paketas domina tai siunčiam į apdorojimą
-                DataProcessing(RxPak, IOIDobj_list[key]);
+            try {
+                var RxPak = {
+                  CMD:      message.readUInt32BE(0), //.toString(16),
+                  SRC:      message.readUInt32BE(4), //.toString(16),
+                  DST:      message.readUInt32BE(8), //.toString(16),      
+                  State:    message.readInt32BE(12),       
+                  IOID:     message.readUInt32BE(16), 
+                  Val:      message.readDoubleBE(20)
+                };
+                
+                // pirmiausia sugeneruojam raktą
+                let key = RxPak.SRC.toString(16).toUpperCase() +"_"+ RxPak.IOID;
+                
+                // Tikrinam ar mus domina šis paketas
+                if(IOIDobj_list[key] !== undefined){ 
+                    // Jeigu paketas domina tai siunčiam į apdorojimą
+                    DataProcessing(RxPak, IOIDobj_list[key]);
+                }
+            } catch (err) {
+                // Ignore malformed packets to prevent crashes
+                console.warn('ACEPRO-NET: Received malformed UDP packet, ignoring');
             }
 
        });
@@ -677,11 +688,23 @@ module.exports = function(RED)
         
         // kai NODE yra uždaroma arba restartuojama, reikia stabdyti taimerius t.t.
         this.on("close", function() {
-            clearInterval(CheckIfTimeForProcc);
-            srv.close();
-            IOIDobj_list.splice(0,IOIDobj_list.length);
-            IOIDobj_list.length = 0;   
-            IOIDobj_list = [];            
+            // Clear timer safely
+            if (CheckIfTimeForProcc) {
+                clearInterval(CheckIfTimeForProcc);
+                CheckIfTimeForProcc = null;
+            }
+            
+            // Close UDP server safely
+            if (srv) {
+                srv.close();
+            }
+            
+            // Clear object list safely
+            if (IOIDobj_list) {
+                IOIDobj_list.splice(0, IOIDobj_list.length);
+                IOIDobj_list.length = 0;   
+                IOIDobj_list = [];
+            }            
         });
 
   
@@ -737,7 +760,7 @@ module.exports = function(RED)
         node.RegisterIOID = function(IOIDobj, nCallBack){
             
             // sugeneruojam CRC32 kuris bus naudojamas raktui bei paketų atpažinimui
-            let dstCRC = crc32_acepro(new Buffer(IOIDobj.host,'ascii'));
+            let dstCRC = crc32_acepro(Buffer.from(IOIDobj.host,'ascii'));
             // generuojam raktą
             let key = dstCRC.toString(16).toUpperCase() +"_"+ IOIDobj.IOID;
             // paruošiam topic'ą
@@ -827,7 +850,7 @@ module.exports = function(RED)
          // Išregistruojam nenaudojamą node'ą  --------------------------------------------------------
         node.UnRegisterIOID = function(IOIDobj, nCallBack){
             // sugeneruojam CRC32 kuris bus naudojamas raktui bei paketų atpažinimui
-            let dstCRC = crc32_acepro(new Buffer(IOIDobj.host,'ascii'));
+            let dstCRC = crc32_acepro(Buffer.from(IOIDobj.host,'ascii'));
             // generuojam raktą
             let key = dstCRC.toString(16).toUpperCase() +"_"+ IOIDobj.IOID;
             // surandam objektą
@@ -849,6 +872,20 @@ module.exports = function(RED)
         node.send = function(sender, data, callback) {
 
         //    console.log(sender);
+        
+            // Basic input validation
+            if (!sender || !data || typeof callback !== 'function') {
+                console.warn('ACEPRO-NET: Invalid parameters passed to send function');
+                if (typeof callback === 'function') {
+                    callback(false, {payload: {fill:"red", shape:"dot", text:"Invalid parameters"}});
+                }
+                return;
+            }
+            
+            if (!sender.host || sender.IOID === undefined) {
+                callback(false, {payload: {fill:"red", shape:"dot", text:"Missing host or IOID"}});
+                return;
+            }
                 
             // tikrinam ar reikšmė yra skaičius
             if(isNaN(data.payload)){
@@ -857,7 +894,7 @@ module.exports = function(RED)
             }
             
             // sugeneruojam CRC32 kuris bus naudojamas raktui 
-            let dstCRC = crc32_acepro(new Buffer(sender.host,'ascii'));
+            let dstCRC = crc32_acepro(Buffer.from(sender.host,'ascii'));
             // generuojam raktą
             let key = dstCRC.toString(16).toUpperCase() +"_"+ sender.IOID;
 
