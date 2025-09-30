@@ -87,6 +87,23 @@ const cmdGetVal = aceprolib.constants.CMD_GetVal;
 const isEmpty = aceprolib.utils.isEmptyObject({});
 ```
 
+## Multi-PC Network Deployment
+
+✅ **Multiple instances can run on different PCs on the same network without interference!**
+
+This package supports running multiple Node-RED instances with aceproNet nodes on different PCs within the same network. Each instance:
+- Has a unique identifier (automatically generated)
+- Shares the UDP port using SO_REUSEADDR
+- Only processes packets for its registered IOIDs
+- Works harmoniously with other instances
+
+For detailed information about multi-PC deployment, see [MULTI-PC-DEPLOYMENT.md](MULTI-PC-DEPLOYMENT.md).
+
+### Quick Test
+Verify multi-instance compatibility:
+
+        node test-multi-instance.js
+
 ## Testing
 
 Run the test suite with:
