@@ -626,7 +626,8 @@ module.exports = function(RED)
         
         
         // inicializuojam IPv4/UDP RX apdorojimą
-        var srv = udp.createSocket('udp4');
+        // Enable SO_REUSEADDR to allow multiple instances on the same network
+        var srv = udp.createSocket({ type: 'udp4', reuseAddr: true });
         
         
         srv.on('error', (err) => {
