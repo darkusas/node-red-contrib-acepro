@@ -640,8 +640,9 @@ module.exports = function(RED)
             IOIDobj_list = [];  
         });
         
-        // bindinam portą ir IP
-        srv.bind(port, BrCastAddr, function() {
+        // bindinam portą į 0.0.0.0 (klausome visomis sąsajomis)
+        // BrCastAddr naudojamas tik siuntimui (netwSend)
+        srv.bind(port, '0.0.0.0', function() {
             srv.setBroadcast(true); // nurodom kad tai yra Broadcast paketai
         });
         
