@@ -626,7 +626,8 @@ module.exports = function(RED)
         
         
         // inicializuojam IPv4/UDP RX apdorojimą
-        var srv = udp.createSocket('udp4');
+        // reuseAddr: true nustato SO_REUSEADDR ir SO_REUSEPORT
+        var srv = udp.createSocket({ type: 'udp4', reuseAddr: true });
         
         
         srv.on('error', (err) => {
@@ -640,8 +641,9 @@ module.exports = function(RED)
             IOIDobj_list = [];  
         });
         
-        // bindinam portą ir IP
-        srv.bind(port, BrCastAddr, function() {
+        // bindinam portą į 0.0.0.0 (klausome visomis sąsajomis)
+        // BrCastAddr naudojamas tik siuntimui (netwSend)
+        srv.bind(port, '0.0.0.0', function() {
             srv.setBroadcast(true); // nurodom kad tai yra Broadcast paketai
         });
         

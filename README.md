@@ -58,7 +58,7 @@ Advanced nodes for handling multiple IOIDs simultaneously.
         "type": "aceproNet",
         "name": "ACEPRO Network",
         "BrAddress": "192.168.1.255",
-        "port": "12345"
+        "port": "31456"
     },
     {
         "id": "input1", 
