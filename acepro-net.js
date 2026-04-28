@@ -626,7 +626,8 @@ module.exports = function(RED)
         
         
         // inicializuojam IPv4/UDP RX apdorojimą
-        var srv = udp.createSocket('udp4');
+        // reuseAddr: true nustato SO_REUSEADDR ir SO_REUSEPORT
+        var srv = udp.createSocket({ type: 'udp4', reuseAddr: true });
         
         
         srv.on('error', (err) => {
