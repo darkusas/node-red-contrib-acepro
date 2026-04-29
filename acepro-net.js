@@ -488,6 +488,13 @@ module.exports = function(RED)
                 case AcOS_Ready:
                     SetActionNeededAfter(AceObj, aceBUS_RxWarnDelay);   
                     
+                    if(RxPac !== null){
+                        // Paketas gautas – resetuojam taimerį ir liekam AcOS_Ready be GetVal siuntimo
+                        AceObj.cntRetry = 0;
+                        break;
+                    }
+                    
+                    // Taimeris suveikė – per 60s negautas paketas, siunčiam GetVal
                     AceObj.St = AcOS_WarnTO;
                     AceObj.cntWarnTO++;
                     AceObj.cntRetry = 1;
