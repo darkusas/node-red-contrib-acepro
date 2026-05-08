@@ -27,8 +27,8 @@ test('Library exports expected structure', () => {
 
 // Test version
 test('Version is correct', () => {
-    if (aceprolib.version !== "1.3.7") {
-        throw new Error(`Expected version 1.3.7, got ${aceprolib.version}`);
+    if (aceprolib.version !== "2.0.0") {
+        throw new Error(`Expected version 2.0.0, got ${aceprolib.version}`);
     }
 });
 

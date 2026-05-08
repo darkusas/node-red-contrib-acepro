@@ -23,6 +23,6 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/darkusas/node-red-contrib-acepro"
+    "url": "git+https://github.com/darkusas/node-red-contrib-acepro.git"
   }
 }

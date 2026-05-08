@@ -23,7 +23,7 @@
 
 module.exports = {
     // Library version
-    version: "1.3.7",
+    version: "2.0.0",
     
     // Common constants for AcePro protocol
     constants: {
